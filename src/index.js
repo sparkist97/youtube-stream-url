@@ -1,6 +1,6 @@
 const axios = require('axios');
 
-const getInfo = async (url) => {
+const getInfo = async function (url) {
 
     let video_id = getVideoId(url);
 
@@ -41,7 +41,7 @@ const getInfo = async (url) => {
         video_id, title, thumbnail_url, view_count,
         length_seconds, allow_embed, author, formats
     }
-};
+}
 
 const getVideoId = (url) => {
     let opts = {fuzzy: true};
@@ -78,7 +78,7 @@ const getVideoId = (url) => {
     }
 
     return null;
-};
+}
 
 const parse_str = (str, array) => {
 
@@ -180,11 +180,9 @@ const parse_str = (str, array) => {
             lastObj[key] = value
         }
     }
-};
+}
 
 module.exports = {
     getInfo,
     getVideoId
-};
-
-
+}
