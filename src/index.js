@@ -1,6 +1,6 @@
 const axios = require('axios');
 
-const getInfo = async (url) => {
+const getInfo = (url) => {
 
     let video_id = getVideoId(url);
 
@@ -8,54 +8,70 @@ const getInfo = async (url) => {
 
     let ytApi = 'http://www.youtube.com/get_video_info';
 
-    let response = await axios.get(ytApi, {
-        params: {video_id}
-    }).catch(err => ({data: false}));
+    axios.get(ytApi, {
+        params: {
+            video_id
+        }
+    }).then(function (res) {
+        let video_info = response.data;
 
-    if (!response.data || response.data.indexOf('errorcode') > -1) return false;
+        let data = {};
 
-    let video_info = response.data;
+        parse_str(video_info, data);
 
-    let data = {};
+        let {
+            url_encoded_fmt_stream_map,
+            title,
+            thumbnail_url,
+            view_count,
+            length_seconds,
+            allow_embed,
+            author
+        } = data;
 
-    parse_str(video_info, data);
+        let streamsMap = url_encoded_fmt_stream_map.split(',');
 
-    let {
-        url_encoded_fmt_stream_map,
-        title, thumbnail_url, view_count, length_seconds,
-        allow_embed, author
-    } = data;
+        let formats = [];
 
-    let streamsMap = url_encoded_fmt_stream_map.split(',');
+        for (let stream of streamsMap) {
+            let format = {};
+            parse_str(stream, format);
 
-    let formats = [];
+            formats.push(format);
+        }
 
-    for (let stream of streamsMap) {
-        let format = {};
-        parse_str(stream, format);
+        return {
+            video_id,
+            title,
+            thumbnail_url,
+            view_count,
+            length_seconds,
+            allow_embed,
+            author,
+            formats
+        }
+    }).catch(function (err) {
+        return false;
+    });
 
-        formats.push(format);
-    }
 
-    return {
-        video_id, title, thumbnail_url, view_count,
-        length_seconds, allow_embed, author, formats
-    }
 }
 
 const getVideoId = (url) => {
-    let opts = {fuzzy: true};
+    let opts = {
+        fuzzy: true
+    };
 
     if (/youtu\.?be/.test(url)) {
 
         // Look first for known patterns
         let i;
         let patterns = [
-            /youtu\.be\/([^#\&\?]{11})/,  // youtu.be/<id>
-            /\?v=([^#\&\?]{11})/,         // ?v=<id>
-            /\&v=([^#\&\?]{11})/,         // &v=<id>
-            /embed\/([^#\&\?]{11})/,      // embed/<id>
-            /\/v\/([^#\&\?]{11})/         // /v/<id>
+            /youtu\.be\/([^#\&\?]{11})/, // youtu.be/<id>
+            /\?v=([^#\&\?]{11})/, // ?v=<id>
+            /\&v=([^#\&\?]{11})/, // &v=<id>
+            /embed\/([^#\&\?]{11})/, // embed/<id>
+            /\/v\/([^#\&\?]{11})/ // /v/<id>
         ];
 
         // If any pattern matches, return the ID
