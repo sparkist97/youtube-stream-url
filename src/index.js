@@ -1,8 +1,8 @@
 const axios = require('axios');
 
-const getInfo = async ({url}) => {
+const getInfo = async (url) => {
 
-    let video_id = getVideoId({url});
+    let video_id = getVideoId(url);
 
     if (!video_id) return false;
 
@@ -43,7 +43,7 @@ const getInfo = async ({url}) => {
     }
 };
 
-const getVideoId = ({url}) => {
+const getVideoId = (url) => {
     let opts = {fuzzy: true};
 
     if (/youtu\.?be/.test(url)) {
