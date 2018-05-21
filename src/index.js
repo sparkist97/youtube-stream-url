@@ -1,6 +1,6 @@
 const axios = require('axios');
 
-const getInfo = async function (url) {
+const getInfo = async (url) => {
 
     let video_id = getVideoId(url);
 
