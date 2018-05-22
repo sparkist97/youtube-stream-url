@@ -6,7 +6,7 @@ module.exports.getInfo = (url) => {
 
     if (!video_id) return false;
 
-    let ytApi = 'http://www.youtube.com/get_video_info';
+    let ytApi = 'https://www.youtube.com/get_video_info';
 
     return axios.get(ytApi, {
         params: {
