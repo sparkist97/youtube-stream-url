@@ -46,7 +46,7 @@ module.exports.getInfo = (url) => {
             length_seconds: length_seconds,
             allow_embed: allow_embed,
             author: author,
-            format: formats
+            formats: formats
         }
         return result;
     }).catch(function (err) {
