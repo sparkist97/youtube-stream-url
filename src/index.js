@@ -1,24 +1,23 @@
 const axios = require('axios');
 
-const getInfo = (url) => {
+module.exports.getInfo = (url) => {
 
-    let video_id = getVideoId(url);
+    let video_id = module.exports.getVideoId(url);
 
     if (!video_id) return false;
 
     let ytApi = 'http://www.youtube.com/get_video_info';
 
-    axios.get(ytApi, {
+    return axios.get(ytApi, {
         params: {
             video_id
         }
-    }).then(function (res) {
+    }).then(function (response) {
         let video_info = response.data;
 
         let data = {};
 
         parse_str(video_info, data);
-
         let {
             url_encoded_fmt_stream_map,
             title,
@@ -39,25 +38,26 @@ const getInfo = (url) => {
 
             formats.push(format);
         }
-
-        return {
-            video_id,
-            title,
-            thumbnail_url,
-            view_count,
-            length_seconds,
-            allow_embed,
-            author,
-            formats
+        let result = {
+            video_id: video_id,
+            title: title,
+            thumbnail_url: thumbnail_url,
+            view_count: view_count,
+            length_seconds: length_seconds,
+            allow_embed: allow_embed,
+            author: author,
+            format: formats
         }
+        return result;
     }).catch(function (err) {
+        console.log(err);
         return false;
     });
 
 
 }
 
-const getVideoId = (url) => {
+module.exports.getVideoId = (url) => {
     let opts = {
         fuzzy: true
     };
@@ -196,9 +196,4 @@ const parse_str = (str, array) => {
             lastObj[key] = value
         }
     }
-}
-
-module.exports = {
-    getInfo,
-    getVideoId
 }
